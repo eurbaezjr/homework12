@@ -37,5 +37,5 @@ INSERT INTO role_info (title, salary,department_id)
 VALUES ("Manager", 160000.99, 3000);
 
 INSERT INTO department_info (department)
-VALUES ("marketing");
+VALUES ("Marketing");
 

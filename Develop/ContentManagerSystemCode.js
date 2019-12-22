@@ -30,19 +30,19 @@ function runSearch() {
         "View All Departments",
         "View All Roles",
         "View All Empoyees",
-        "Add Departments",
-        "Add Roles", 
-        "Add Employees", 
-        "Update Employee Roles"
+        "Add Department",
+        "Add Role", 
+        "Add Employee", 
+        "Update Employee Role"
       ]
     })
     .then(function(answer) {
       switch (answer.action) {
-      case "View All Departments":
+      case "View All Department":
         departmentSearch();
         break;
 
-      case "View All Roles":
+      case "View All Role":
         rolesSearch();
         break;
 
@@ -58,11 +58,11 @@ function runSearch() {
         roleAdd();
         break;
 
-      case "Add Employees":
+      case "Add Employee":
         employeeAdd();
         break;
 
-      case "Update Employee Roles":
+      case "Update Employee Role":
         employeeUpdate();
         break;
 
@@ -73,100 +73,124 @@ function runSearch() {
 function departmentSearch() {
       var query = "SELECT * FROM department_info";
       connection.query(query,function(err, res) {
-          console.log("Department:" + res[0]);
+        if (err) throw err;
+          console.log("-----------------List of Departments-------------------");
+        for (var i = 0; i < res.length; i++) {
+          console.log("|| ID: " + res[i].id + " || Department: " + res[i].department + " ||");
+        }
+          console.log("--------------------------------------------");
           runSearch();
       });
     }
 
-// function rolesSearch() {
-//   inquirer
-//     .prompt({
-//       name: "role",
-//       type: "input",
-//       message: "What role would you like to search for?"
-//     })
-//     .then(function(answer) {
-//       var query = "SELECT role FROM role_info WHERE ?";
-//       connection.query(query, { role: answer.role }, function(err, res) {
-//         for (var i = 0; i < res.length; i++) {
-//           console.log("role: " + res[i].role);
-//         }
-//         runSearch();
-//       });
-//     });
-// }
+function rolesSearch() {
+      var query = "SELECT id, title, salary, department_id FROM role_info";
+      connection.query(query, function(err, res) {
+        if (err) throw err;
+         console.log("-----------------List of Roles-------------------");
+        for (var i = 0; i < res.length; i++) {
+          console.log("|| ID: " + res[i].id + " || Title: " + res[i].title + " || Salary: " + res[i].salary + " || Department ID: " + res[i].department_id + " ||"  );
+        }
+        console.log("--------------------------------------------");
+        runSearch();
+      });
+}
 
-// function employeeSearch() {
-//   inquirer
-//     .prompt({
-//       name: "employee",
-//       type: "input",
-//       message: "What employee would you like to search for?"
-//     })
-//     .then(function(answer) {
-//       var query = "SELECT employee FROM employee_info WHERE ?";
-//       connection.query(query, { employee: answer.employee }, function(err, res) {
-//         for (var i = 0; i < res.length; i++) {
-//           console.log("employee: " + res[i].employee);
-//         }
-//         runSearch();
-//       });
-//     });
-// }
+function employeesSearch() {
+  var query = "SELECT id, first_name, last_name, role_id, manager_id FROM employee_info";
+  connection.query(query, function(err, res) {
+    if (err) throw err;
+     console.log("-----------------RESPONSE-------------------");
+    for (var i = 0; i < res.length; i++) {
+      console.log("|| ID: " + res[i].id + " || First Name: " + res[i].first_name + " || Last Name: " + res[i].last_name + " || role ID: " + res[i].role_id + " || Manager ID: " + res[i].manager_id + " ||" );
+    }
+    console.log("--------------------------------------------");
+    runSearch();
+  });
+}
 
-// // function departmentAdd() {
-// //   inquirer
-// //     .prompt({
-// //       name: "department",
-// //       type: "input",
-// //       message: "What department would you like to add?"
-// //     })
-// //     .then(function(answer) {
-// //       var query = "INSERT INTO department_info VALUE department_info WHERE ?";
-// //       connection.query(query, { department: answer.department }, function(err, res) {
-// //         for (var i = 0; i < res.length; i++) {
-// //           console.log("department: " + res[i].department);
-// //         }
-// //         runSearch();
-// //       });
-// //     });
-// // }
+function departmentAdd() {
+  inquirer
+    .prompt({
+      name: "department",
+      type: "input",
+      message: "What department would you like to add?"
+    })
+    .then(function(answer) {
+      var query = "INSERT INTO department_info SET ?";
+      connection.query(query, {department: answer.department }, function(err, res) {
+      if (err) throw err;
+      console.log("-----------------Department Succesfully Created-------------------");
+      console.log("|| Department: " + answer.department + " ||");
+      console.log("------------------------------------------------------------------");
+      runSearch();
+      });
+    });
+}
 
-// // function roleAdd() {
-// //   inquirer
-// //     .prompt({
-// //       name: "role",
-// //       type: "input",
-// //       message: "What role would you like to add?"
-// //     })
-// //     .then(function(answer) {
-// //       var query = "INSERT INTO role_info VALUE role_info WHERE ?";
-// //       connection.query(query, { role: answer.role }, function(err, res) {
-// //         for (var i = 0; i < res.length; i++) {
-// //           console.log("role: " + res[i].role);
-// //         }
-// //         runSearch();
-// //       });
-// //     });
-// // }
+function roleAdd() {
+  inquirer
+    .prompt([{
+      name: "title",
+      type: "input",
+      message: "What title would you like to add?"
+    },
+    {
+      name: "salary",
+      type: "input",
+      message: "What is the role's salary?"
+    },
+    {
+      name: "department_id",
+      type: "input",
+      message: "What is the department id for this role?"
+    }])
+    .then(function(answer) {
+      var query = "INSERT INTO role_info SET ?";
+      connection.query(query, {title: answer.title, salary: answer.salary, department_id: answer.department_id}, function(err, res) {
+      if (err) throw err;
+      console.log("-----------------Role Successfully Created-------------------");
+      console.log("|| Title: " + answer.title + " || Salary: " + answer.salary + " || Department ID: " + answer.department_id + " ||");
+      console.log("-------------------------------------------------------------");
+      runSearch();
+      });
+    });
+}
 
-// // function employeeAdd() {
-// //   inquirer
-// //     .prompt({
-// //       name: "employee",
-// //       type: "input",
-// //       message: "What employee would you like to add?"
-// //     })
-// //     .then(function(answer) {
-// //       var query = "INSERT INTO employee_info VALUE employee_info WHERE ?";
-// //       connection.query(query, { employee: answer.employee }, function(err, res) {
-// //         for (var i = 0; i < res.length; i++) {
-// //           console.log("employee: " + res[i].employee);
-// //         }
-// //         runSearch();
-// //       });
-// //     });
-// // }
+function employeeAdd() {
+  inquirer
+    .prompt([{
+      name: "first_name",
+      type: "input",
+      message: "What is the employee's first name?"
+    },
+    {
+      name: "last_name",
+      type: "input",
+      message: "What is the employee's last name?"
+    },
+    {
+      name: "role_id",
+      type: "input",
+      message: "What is the employee's role id?"
+    },
+    {
+      name: "manager_id",
+      type: "input",
+      message: "What is the employee's manager id?"
+    }
+    ])
+    .then(function(answer) {
+      var query = "INSERT INTO role_info SET ?";
+      connection.query(query, {first_name: answer.first_name, last_name: answer.last_name, role_id: answer.role_id, manager_id: answer.manager_id}, function(err, res) {
+      if (err) throw err;
+      console.log("-----------------Role Successfully Created-------------------");
+      console.log("|| First Name: " + answer.first_name + " || Last Name: " + answer.last_name + " || Role ID: " + answer.role_id + " || Manager ID: " + answer.manager_id + " ||");
+      console.log("-------------------------------------------------------------");
+      runSearch();
+      });
+    });
+}
 
 // // function employeeUpdate() {
 // //   inquirer
