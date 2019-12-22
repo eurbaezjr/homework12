@@ -38,11 +38,11 @@ function runSearch() {
     })
     .then(function(answer) {
       switch (answer.action) {
-      case "View All Department":
+      case "View All Departments":
         departmentSearch();
         break;
 
-      case "View All Role":
+      case "View All Roles":
         rolesSearch();
         break;
 
@@ -50,11 +50,11 @@ function runSearch() {
         employeesSearch();
         break;
       
-      case "Add Departments":
+      case "Add Department":
         departmentAdd();
         break;
 
-      case "Add Roles":
+      case "Add Role":
         roleAdd();
         break;
 
@@ -74,11 +74,11 @@ function departmentSearch() {
       var query = "SELECT * FROM department_info";
       connection.query(query,function(err, res) {
         if (err) throw err;
-          console.log("-----------------List of Departments-------------------");
+          // console.log("-----------------List of Departments-------------------");
         for (var i = 0; i < res.length; i++) {
           console.log("|| ID: " + res[i].id + " || Department: " + res[i].department + " ||");
         }
-          console.log("--------------------------------------------");
+          // console.log("--------------------------------------------");
           runSearch();
       });
     }
@@ -181,7 +181,7 @@ function employeeAdd() {
     }
     ])
     .then(function(answer) {
-      var query = "INSERT INTO role_info SET ?";
+      var query = "INSERT INTO employee_info SET ?";
       connection.query(query, {first_name: answer.first_name, last_name: answer.last_name, role_id: answer.role_id, manager_id: answer.manager_id}, function(err, res) {
       if (err) throw err;
       console.log("-----------------Role Successfully Created-------------------");
