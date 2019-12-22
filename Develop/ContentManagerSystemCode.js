@@ -34,7 +34,8 @@ function runSearch() {
         "Add Department",
         "Add Role", 
         "Add Employee", 
-        "Update Employee Role"
+        "Update Employee Role",
+        "Update Employee Manager",
       ]
     })
     .then(function(answer) {
@@ -67,6 +68,10 @@ function runSearch() {
         employeeUpdate();
         break;
 
+      case "Update Employee Manager":
+        employeeManagerUpdate();
+        break;
+
       }
     });
 }
@@ -75,9 +80,9 @@ function departmentSearch() {
       var query = "SELECT * FROM department_info";
       connection.query(query,function(err, res) {
         if (err) throw err;
-          // console.log("-----------------List of Departments-------------------");
+          console.log("--------------------------------------------");
           console.table(res);
-          // console.log("--------------------------------------------");
+          console.log("--------------------------------------------");
           runSearch();
       });
     }
@@ -86,7 +91,9 @@ function rolesSearch() {
       var query = "SELECT id, title, salary, department_id FROM role_info";
       connection.query(query, function(err, res) {
         if (err) throw err;
+        console.log("--------------------------------------------");
         console.table (res);
+        console.log("--------------------------------------------");
         runSearch();
       });
 }
@@ -95,7 +102,9 @@ function employeesSearch() {
   var query = "SELECT id, first_name, last_name, role_id, manager_id FROM employee_info";
   connection.query(query, function(err, res) {
     if (err) throw err;
+    console.log("--------------------------------------------");
     console.table (res);
+    console.log("--------------------------------------------");
     runSearch();
   });
 }
@@ -196,6 +205,29 @@ function employeeUpdate() {
       name: "role_id",
       type: "input",
       message: "What is the employee's new role id?"
+    }])
+    .then(function(answer) {
+      var query = "UPDATE employee_info SET ? WHERE first_name = ? AND last_name = ?";
+      connection.query(query,[{role_id: answer.role_id},answer.first_name,answer.last_name], function(err, res) {
+      if (err) throw err;
+      console.log("-----------------UPDATED Employee Role Successfully-------------------");
+      console.log("|| First Name: " + answer.first_name + " || Last Name: " + answer.last_name + " || Role ID: " + answer.role_id + " ||");
+      employeesSearch();
+      });
+    });
+}
+
+function employeeManagerUpdate() {
+  inquirer
+    .prompt([{
+      name: "first_name",
+      type: "input",
+      message: "What is the employee's first name?"
+    },
+    {
+      name: "last_name",
+      type: "input",
+      message: "What is the employee's last name?"
     },
     {
       name: "manager_id",
@@ -205,16 +237,11 @@ function employeeUpdate() {
     ])
     .then(function(answer) {
       var query = "UPDATE employee_info SET ? WHERE first_name = ? AND last_name = ?";
-      connection.query(query,[{role_id: answer.role_id, manager_id: answer.manager_id},answer.first_name,answer.last_name], function(err, res) {
+      connection.query(query,[{manager_id: answer.manager_id},answer.first_name,answer.last_name], function(err, res) {
       if (err) throw err;
       console.log("-----------------UPDATED Employee Role Successfully-------------------");
-      console.log("|| First Name: " + answer.first_name + " || Last Name: " + answer.last_name + " || Role ID: " + answer.role_id + " || Manager ID: " + answer.manager_id + " ||");
+      console.log("|| First Name: " + answer.first_name + " || Last Name: " + answer.last_name + " || Manager ID: " + answer.manager_id + " ||");
       employeesSearch();
       });
     });
 }
-
-
-
-
-
