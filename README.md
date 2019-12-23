@@ -44,3 +44,5 @@ View departments, roles, employees
 Update employee roles
 
 Update employee managers
+
+Delete departments, roles, employees

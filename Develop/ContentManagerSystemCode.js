@@ -36,6 +36,9 @@ function runSearch() {
         "Add Employee", 
         "Update Employee Role",
         "Update Employee Manager",
+        "Delete Department",
+        "Delete Role",
+        "Delete Employee",
       ]
     })
     .then(function(answer) {
@@ -71,6 +74,18 @@ function runSearch() {
       case "Update Employee Manager":
         employeeManagerUpdate();
         break;
+
+      case "Delete Department":
+        deleteDepartment();
+        break;
+
+      case "Delete Role":
+        deleteRole();
+      break;
+
+      case "Delete Employee":
+        deleteEmployee();
+      break;
 
       }
     });
@@ -241,6 +256,66 @@ function employeeManagerUpdate() {
       if (err) throw err;
       console.log("-----------------UPDATED Employee Role Successfully-------------------");
       console.log("|| First Name: " + answer.first_name + " || Last Name: " + answer.last_name + " || Manager ID: " + answer.manager_id + " ||");
+      employeesSearch();
+      });
+    });
+}
+
+function deleteDepartment() {
+  inquirer
+    .prompt([{
+      name: "department",
+      type: "input",
+      message: "Which department would you like to delete?"
+    }
+    ])
+    .then(function(answer) {
+      var query = "DELETE FROM department_info WHERE department = ?";
+      connection.query(query,[answer.department], function(err, res) {
+      if (err) throw err;
+      console.log("-----------------DELETED Department Successfully-------------------");
+      console.log("|| Department Name " + answer.department + " ||");
+      departmentSearch();
+      });
+    });
+}
+
+function deleteRole() {
+  inquirer
+    .prompt([{
+      name: "title",
+      type: "input",
+      message: "What is the title of the role you wish to delete?"
+    }])
+    .then(function(answer) {
+      var query = "DELETE FROM role_info WHERE title = ?";
+      connection.query(query,[answer.title], function(err, res) {
+      if (err) throw err;
+      console.log("-----------------DELETED Role Successfully-------------------");
+      console.log("|| Title: " + answer.title + " ||");
+      rolesSearch();
+      });
+    });
+}
+
+function deleteEmployee() {
+  inquirer
+    .prompt([{
+      name: "first_name",
+      type: "input",
+      message: "What is the employee's first name?"
+    },
+    {
+      name: "last_name",
+      type: "input",
+      message: "What is the employee's last name?"
+    }])
+    .then(function(answer) {
+      var query = "DELETE FROM employee_info WHERE first_name = ? AND last_name = ?";
+      connection.query(query,[answer.first_name,answer.last_name], function(err, res) {
+      if (err) throw err;
+      console.log("-----------------DELETED Employee Successfully-------------------");
+      console.log("|| First Name: " + answer.first_name + " || Last Name: " + answer.last_name + " ||");
       employeesSearch();
       });
     });
